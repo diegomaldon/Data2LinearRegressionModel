@@ -1,5 +1,10 @@
 import sqlite3
 import pandas as pd
+import pythonmonkey as pm
+
+# Uses pythonmonkey to call getFile from script.js and returns CSV file
+file = pm.require('./script')
+file.getFile()
 
 # read the CSV file into a pandas DataFrame
 csv_file = '/Users/danielcanhedo/PycharmProjects/LinearRegressionPractice/25.csv'  # Replace with inputted CSV file path
