@@ -1,11 +1,47 @@
+from flask import Flask, request, jsonify
 import csv
+import io
 import sqlite3
 import pandas as pd
-import pythonmonkey as pm
 
-# Uses pythonmonkey to call getFile from script.js and returns CSV file
-# file = pm.require('./script')
-# file.getFile()
+app = Flask(__name__)
+
+# Route to upload the file (uses Flask) (Flask implemented referencing ChatGPT)
+@app.route('/upload', methods=['POST'])
+def upload():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part in the request"}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if file and file.filename.endswith('.csv'):
+        file_content = file.read().decode('utf-8')
+        dataframe = pd.read_csv(io.StringIO(file_content))
+
+        # Process the file and insert it into the database
+        connection = sqlite3.connect("data.db")
+        table_name = request.form['table_name']
+        type_map = infer_sql_types(dataframe)
+        create_sql_table(connection, table_name, type_map)
+        insert_data_table(connection, table_name, dataframe)
+        connection.close()
+
+        return jsonify({"success": "File uploaded and data inserted into the database!"}), 200
+    else:
+        return jsonify({"error": "Invalid file type"}), 400
+
+
+
+def process_file():
+    try:
+        file_content = file.getFile().result()
+        return file_content
+    except Exception as e:
+        print(f"Error getting file: {e}")
+
 
 # detect the delimiter that separates values in CSV file (referenced to chatGPT)
 def detect_delimiter(csv_file):
@@ -19,7 +55,8 @@ def detect_delimiter(csv_file):
 # read the CSV file into a pandas DataFrame
 def read_csv(csv_file):
     delimiter = detect_delimiter(csv_file)
-    df = pd.read_csv(csv_file, delimiter=delimiter)
+    df = pd.read_csv(io.StringIO(csv_file), delimiter=delimiter)
+
     return df
 
 # create columns by type and store in dictionary (referenced to chatGPT)
@@ -71,18 +108,5 @@ def insert_data_table(connection, table_name, dataframe):
     connection.commit()
     cursor.close()  # Close the cursor after executing the insert query
 
-
-# Main program logic
-connection = sqlite3.connect("data.db")
-
-csv_name = input("Enter your CSV file name: ")
-table_name = input("Enter your table name (ensure not duplicate): ")
-
-dataframe = read_csv(csv_name)
-type_map = infer_sql_types(dataframe)
-create_sql_table(connection, table_name, type_map)
-insert_data_table(connection, table_name, dataframe)
-
-connection.close()
-
-print("Data inserted successfully!")
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
