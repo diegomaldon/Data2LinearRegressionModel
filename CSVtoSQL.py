@@ -4,8 +4,8 @@ import pandas as pd
 import pythonmonkey as pm
 
 # Uses pythonmonkey to call getFile from script.js and returns CSV file
-file = pm.require('./script')
-file.getFile()
+# file = pm.require('./script')
+# file.getFile()
 
 # detect the delimiter that separates values in CSV file (referenced to chatGPT)
 def detect_delimiter(csv_file):
@@ -48,34 +48,40 @@ def create_sql_table(connection, table_name, type_mapping):
     table = f"CREATE TABLE IF NOT EXISTS {table_name} (" # start of SQL create
 
     for col, datatype in type_mapping.items():
-            table += f"{col} {datatype}, "
+            table += f'"{col}" {datatype}, '
 
     table = table.rstrip(", ") + ")" # end of SQL CREATE
 
     cursor.execute(table)
-    cursor.close()
+    connection.commit()  # Don't forget to commit the creation of the table
+    cursor.close()  # Close the cursor after executing the query
 
 
 # inserts data into our created table
-def insert_data_table(table_name, dataframe):
+def insert_data_table(connection, table_name, dataframe):
     cursor = connection.cursor()
 
-    # Generate column placeholders for insertion query
-    columns = ", ".join(dataframe.columns)
+    # Generate column placeholders for insertion query, ensuring columns are quoted
+    columns = ", ".join([f'"{col}"' for col in dataframe.columns])
     placeholders = ", ".join(["?"] * len(dataframe.columns))
-    insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+    insert_query = f'INSERT INTO "{table_name}" ({columns}) VALUES ({placeholders})'
 
     # Insert the rows into the table
     cursor.executemany(insert_query, dataframe.values.tolist())
     connection.commit()
+    cursor.close()  # Close the cursor after executing the insert query
 
 
+# Main program logic
 connection = sqlite3.connect("data.db")
 
-dataframe = read_csv("25.csv")
+csv_name = input("Enter your CSV file name: ")
+table_name = input("Enter your table name (ensure not duplicate): ")
+
+dataframe = read_csv(csv_name)
 type_map = infer_sql_types(dataframe)
-create_sql_table(connection, "user_table", type_map)
-insert_data_table("user_table", dataframe)
+create_sql_table(connection, table_name, type_map)
+insert_data_table(connection, table_name, dataframe)
 
 connection.close()
 
