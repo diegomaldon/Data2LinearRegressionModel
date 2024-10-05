@@ -13,6 +13,12 @@ function uploadFile() {
     imageView.style.border = 0;
 }
 
+function getFile() {
+    return inputFile.files[0];
+}
+
+module.exports = {getFile};
+
 dropArea.addEventListener("dragover", function(e) {
     e.preventDefault();
 });
