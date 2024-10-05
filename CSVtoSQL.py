@@ -1,12 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import csv
 import io
 import sqlite3
 import pandas as pd
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", template_folder="templates")
 
-# Route to upload the file (uses Flask) (Flask implemented referencing ChatGPT)
+# Route to serve the HTML form for file upload
+@app.route('/')
+def index():
+    return render_template('index.html')  # This renders the HTML form when accessed
+
+# Route to handle file upload via POST
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'file' not in request.files:
@@ -32,16 +37,6 @@ def upload():
         return jsonify({"success": "File uploaded and data inserted into the database!"}), 200
     else:
         return jsonify({"error": "Invalid file type"}), 400
-
-
-
-def process_file():
-    try:
-        file_content = file.getFile().result()
-        return file_content
-    except Exception as e:
-        print(f"Error getting file: {e}")
-
 
 # detect the delimiter that separates values in CSV file (referenced to chatGPT)
 def detect_delimiter(csv_file):
@@ -109,4 +104,4 @@ def insert_data_table(connection, table_name, dataframe):
     cursor.close()  # Close the cursor after executing the insert query
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5002)
