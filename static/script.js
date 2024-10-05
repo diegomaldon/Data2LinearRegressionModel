@@ -19,9 +19,9 @@ function uploadFile() {
     if (file && file.name.endsWith('.csv')) {
         let formData = new FormData();
         formData.append("file", file);
-        formData.append("table_name", "my_table");  // You can dynamically set the table name
+        formData.append("table_name", "my_table");
 
-        fetch('http://127.0.0.1:5001/upload', {
+        fetch('/upload', {
             method: 'POST',
             body: formData
         })
