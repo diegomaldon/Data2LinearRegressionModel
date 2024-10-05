@@ -1,33 +1,77 @@
+import csv
 import sqlite3
 import pandas as pd
 
+# detect the delimiter that separates values in CSV file (referenced to chatGPT)
+def detect_delimiter(csv_file):
+    with open(csv_file, 'r') as file:
+        # Use the csv.Sniffer to detect the delimiter
+        sample = file.read(1024)  # Read a sample of the file
+        sniffer = csv.Sniffer()
+        delimiter = sniffer.sniff(sample).delimiter
+        return delimiter
+
 # read the CSV file into a pandas DataFrame
-csv_file = '/Users/danielcanhedo/PycharmProjects/LinearRegressionPractice/25.csv'  # Replace with inputted CSV file path
-df = pd.read_csv(csv_file)
+def read_csv(csv_file):
+    delimiter = detect_delimiter(csv_file)
+    df = pd.read_csv(csv_file, delimiter=delimiter)
+    return df
 
-# connect to the SQLite database (it will create the database if it doesn't exist)
-con = sqlite3.connect('data.db')  # Replace with your database file name
-cur = con.cursor()
+# create columns by type and store in dictionary (referenced to chatGPT)
+def infer_sql_types(df):
+    type_mapping = {}
 
-# Step 3: Create a table to hold the CSV data (replace with your desired table structure)
-cur.execute('''
-    CREATE TABLE IF NOT EXISTS user_data (
-        date DATE,
-        step_count INTEGER,
-        mood INTEGER,
-        calories_burned INTEGER,
-        hours_of_sleep INTEGER,
-        bool_of_active INTEGER,
-        weight_kg INTEGER
-        -- Add more columns here depending on your CSV structure
-    )
-''')
+    for column in df.columns:
+        # Check the dtype of each column and map it to SQL data types
+        if pd.api.types.is_integer_dtype(df[column]):
+            sql_type = 'INTEGER'
+        elif pd.api.types.is_float_dtype(df[column]):
+            sql_type = 'REAL'  # Use REAL for float types in SQLite
+        elif pd.api.types.is_datetime64_any_dtype(df[column]):
+            sql_type = 'DATE'  # Handle datetime columns
+        else:
+            sql_type = 'TEXT'  # Default to TEXT for strings and other types
 
-# Step 4: Insert data from the pandas DataFrame into the SQL table
-df.to_sql('exercise_table', con, if_exists='append', index=False)
+        # Store column name and inferred SQL type in dictionary
+        type_mapping[column] = sql_type
 
-# Step 5: Commit the transaction and close the connection
-con.commit()
-con.close()
+    return type_mapping
+
+# creates SQL table
+def create_sql_table(connection, table_name, type_mapping):
+    cursor = connection.cursor()
+    table = f"CREATE TABLE IF NOT EXISTS {table_name} (" # start of SQL create
+
+    for col, datatype in type_mapping.items():
+            table += f"{col} {datatype}, "
+
+    table = table.rstrip(", ") + ")" # end of SQL CREATE
+
+    cursor.execute(table)
+    cursor.close()
+
+
+# inserts data into our created table
+def insert_data_table(table_name, dataframe):
+    cursor = connection.cursor()
+
+    # Generate column placeholders for insertion query
+    columns = ", ".join(dataframe.columns)
+    placeholders = ", ".join(["?"] * len(dataframe.columns))
+    insert_query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+    # Insert the rows into the table
+    cursor.executemany(insert_query, dataframe.values.tolist())
+    connection.commit()
+
+
+connection = sqlite3.connect("data.db")
+
+dataframe = read_csv("25.csv")
+type_map = infer_sql_types(dataframe)
+create_sql_table(connection, "user_table", type_map)
+insert_data_table("user_table", dataframe)
+
+connection.close()
 
 print("Data inserted successfully!")
