@@ -4,8 +4,8 @@ import pandas as pd
 import pythonmonkey as pm
 
 # Uses pythonmonkey to call getFile from script.js and returns CSV file
-file = pm.require('./script')
-file.getFile()
+init = pm.require('./script')
+init.getFile()
 
 # detect the delimiter that separates values in CSV file (referenced to chatGPT)
 def detect_delimiter(csv_file):
