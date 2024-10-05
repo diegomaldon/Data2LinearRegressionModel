@@ -2,17 +2,18 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import sqlite3
-import CSVtoSQL
+from CSVtoSQL import table_name
 
 # extract data from SQLite database to Python
-def database_to_python(x_var, y_var):
+# extract data from SQLite database to Python
+def database_to_python(x_var, y_var, table_name):
 
-    # connects to exercise database
-    con=sqlite3.connect("data.db")
-    cur=con.cursor()
+    # connects to the database
+    con = sqlite3.connect("data.db")
+    cur = con.cursor()
 
-    # selects data from exercise database
-    my_query = f"SELECT {x_var}, {y_var} FROM user_table"
+    # Ensure table and column names are quoted
+    my_query = f'SELECT "{x_var}", "{y_var}" FROM "{table_name}"'
     cur.execute(my_query)
 
     # place data
@@ -23,7 +24,7 @@ def database_to_python(x_var, y_var):
         x_list.append(row[0])
         y_list.append(row[1])
 
-    # close the sql database connection
+    # close the SQL database connection
     con.close()
 
 
@@ -49,8 +50,8 @@ def buildRegressionModel(x_var, y_var):
     plt.plot(x, y_pred, color='red', label='Regression line')  # Regression line for study hours
 
     plt.title(f'{y_var} vs {x_var}')
-    plt.xlabel(f'{y_var}')
-    plt.ylabel(f'{x_var}')
+    plt.xlabel(f'{x_var}')
+    plt.ylabel(f'{y_var}')
     plt.legend()
     plt.show()
 
@@ -61,6 +62,6 @@ y_list = []
 x_var = input("Enter your X variable (Spelt exactly as on CSV): ")
 y_var = input("Enter your Y variable (Spelt exactly as on CSV): ")
 
-database_to_python(x_var, y_var)
+database_to_python(x_var, y_var, table_name)
 buildRegressionModel(x_var, y_var)
 print("plotted successfully")
