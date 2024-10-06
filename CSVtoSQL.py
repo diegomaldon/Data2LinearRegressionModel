@@ -123,4 +123,4 @@ def insert_data_table(connection, table_name, dataframe):
     cursor.close()  # Close the cursor after executing the insert query
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5002)
+    app.run(debug=True)
