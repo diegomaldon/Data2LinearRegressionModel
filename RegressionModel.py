@@ -6,7 +6,6 @@ import sqlite3
 import seaborn as sns
 
 # extract data from SQLite database to Python
-# extract data from SQLite database to Python
 def database_to_python(x_var, y_var, table_name):
 
     # connects to the database
