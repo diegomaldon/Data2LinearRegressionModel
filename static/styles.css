@@ -1,49 +1,68 @@
-*{
+/* Ensure the entire page is centered */
+body {
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    font-family: 'Poppins', sans-serif;
-    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
 }
 
-.hero{
-    margin-top: 200px;
-    width: 100%;
-    min-height: 100vh;
-    background: linear-gradient(#fff, lightgrey);
+.container {
     display: flex;
-    align-content: center;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
 }
 
-#drop-area{
-    width: 500px;
-    height: 300px;
-    background: #fff;
-    text-align: center;
-    border-radius: 20px;
-
+/* Style for drag-and-drop file upload area */
+#drop-area {
+    width: 300px;
+    height: 200px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px; /* Space between upload area and inputs */
 }
 
-#img-view{
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    border: 2px dashed orange;
-    background: #f7f8ff;
-    background-position: center;
-    background-size: cover;
+#drop-area img {
+    max-width: 50px;
 }
 
-#img-view img{
-    width: 100px;
-    margin-top: 25px;
+#drop-area p {
+    margin: 10px 0 0 0;
 }
 
-#img-view span{
-    display: block;
-    font-size: 12px;
-    color: #777;
-    margin-top: 15px;
+/* Style for input fields */
+.input-fields {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-fields input {
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+}
+
+#submit-button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#submit-button:hover {
+    background-color: #0056b3;
 }
 
 

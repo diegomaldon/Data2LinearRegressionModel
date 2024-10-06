@@ -1,7 +1,6 @@
 const dropArea = document.getElementById("drop-area");
 const inputFile = document.getElementById("input-file");
-const xVarInput = document.getElementById("x_var");  // Capture x_var input field
-const yVarInput = document.getElementById("y_var");  // Capture y_var input field
+const imgView = document.getElementById("img-view");
 
 dropArea.addEventListener("dragover", function(e) {
     e.preventDefault();
@@ -17,8 +16,8 @@ inputFile.addEventListener("change", uploadFile);
 
 function uploadFile() {
     const file = inputFile.files[0];
-    const x_var = xVarInput.value;  // Capture the value of x_var
-    const y_var = yVarInput.value;  // Capture the value of y_var
+    const x_var = document.getElementById("x_var").value;
+    const y_var = document.getElementById("y_var").value;
 
     if (file && file.name.endsWith('.csv')) {
         let formData = new FormData();
@@ -35,6 +34,10 @@ function uploadFile() {
         .then(data => {
             if (data.success) {
                 alert(data.success);
+
+                // Set the image view to show the generated plot
+                const imgView = document.getElementById("img-view");
+                imgView.innerHTML = `<img src="${data.img_url}" alt="Generated Plot">`;
             } else {
                 alert(data.error);
             }

@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
@@ -34,7 +36,7 @@ def database_to_python(x_var, y_var, table_name):
 
 
 # build linear regression model
-def buildRegressionModel(x_list, y_list, x_var, y_var):
+def buildRegressionModel(x_list, y_list, x_var, y_var, filename="plot.png"):
     # initialize numpy arrays for prediction
     x = np.array(x_list).reshape(-1, 1)
     y = np.array(y_list)
@@ -58,5 +60,17 @@ def buildRegressionModel(x_list, y_list, x_var, y_var):
     plt.ylabel(f'{y_var}')
     plt.legend()
     plt.show()
-
     print("plotted successfully")
+
+    # Define the path where the plot will be saved
+    save_path = os.path.join('static', filename)  # Saving in the 'static/' directory
+
+    # Save the plot to the defined path
+    plt.savefig(save_path)
+
+    # Close the figure to prevent display in non-GUI environments
+    plt.close()
+
+    print(f"Plot saved successfully at {save_path}!")
+    return save_path
+

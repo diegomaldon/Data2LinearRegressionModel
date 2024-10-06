@@ -4,28 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drag and Drop File Uploader</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="hero">
-        <label for="input-file" id="drop-area">
-            <input type="file" id="input-file" accept=".csv" hidden>
-            <div id="img-view">
-                <img src="icon.png" alt="Upload Icon">
-                <p>Drag and drop a CSV file, or click to upload</p>
-            </div>
-        </label>
+    <div class="container">
+        <!-- Drag-and-Drop File Upload Area -->
+        <div class="hero">
+            <label for="input-file" id="drop-area">
+                <input type="file" id="input-file" accept=".csv" hidden>
+                <div id="upload-view">
+                    <img src="../static/icon.png" alt="Upload Icon">
+                    <p>Drag and drop a CSV file, or click to upload</p>
+                </div>
+            </label>
+        </div>
+
+        <!-- X and Y variable input fields -->
+        <div class="input-fields">
+            <label for="x_var">X Variable:</label>
+            <input type="text" id="x_var" placeholder="Enter X Variable">
+            <br>
+            <label for="y_var">Y Variable:</label>
+            <input type="text" id="y_var" placeholder="Enter Y Variable">
+            <br>
+            <button id="submit-button">Submit</button>
+        </div>
+
+        <!-- Area to display the generated plot -->
+        <div id="img-view"></div>
     </div>
 
-    <!-- Add text input fields for x_var and y_var -->
-    <div>
-        <label for="x_var">X Variable:</label>
-        <input type="text" id="x_var" placeholder="Enter X Variable">
-        <br>
-        <label for="y_var">Y Variable:</label>
-        <input type="text" id="y_var" placeholder="Enter Y Variable">
-    </div>
-
-    <script src="/static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

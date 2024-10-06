@@ -1,4 +1,3 @@
-import os
 from flask import Flask, request, jsonify, render_template
 import csv
 import io
@@ -49,9 +48,12 @@ def upload():
         connection.close()
 
         x_list, y_list = database_to_python(x_var, y_var, table_name)
-        buildRegressionModel(x_list, y_list, x_var, y_var)
+        plot_filename = f'{table_name}_url'
+        image_path = buildRegressionModel(x_list, y_list, x_var, y_var)
 
-        return jsonify({"success": "File uploaded and data inserted into the database!"}), 200
+        # Return the image URL to be displayed on the frontend
+        img_url = f'/static/{image_path}'
+        return jsonify({"success": "File uploaded and data inserted into the database!", "img_url": img_url}), 200
     else:
         return jsonify({"error": "Invalid file type"}), 400
 
