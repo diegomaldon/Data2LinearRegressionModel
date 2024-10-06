@@ -31,7 +31,7 @@ def upload():
         # Process the file and insert it into the database
         connection = sqlite3.connect("data.db")
 
-        # create table name removing .csv from filename
+        # Create table name removing .csv from filename
         table_name = file.filename.rsplit('.', 1)[0]
 
         # Get x_var and y_var from form data
@@ -48,11 +48,11 @@ def upload():
         connection.close()
 
         x_list, y_list = database_to_python(x_var, y_var, table_name)
-        plot_filename = f'{table_name}_url'
-        image_path = buildRegressionModel(x_list, y_list, x_var, y_var)
+        plot_filename = f'{table_name}_plot.png'  # You can customize this filename as needed
+        image_path = buildRegressionModel(x_list, y_list, x_var, y_var, filename=plot_filename)
 
         # Return the image URL to be displayed on the frontend
-        img_url = f'/static/{image_path}'
+        img_url = f'/static/{plot_filename}'
         return jsonify({"success": "File uploaded and data inserted into the database!", "img_url": img_url}), 200
     else:
         return jsonify({"error": "Invalid file type"}), 400

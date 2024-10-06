@@ -22,7 +22,6 @@ function uploadFile() {
     if (file && file.name.endsWith('.csv')) {
         let formData = new FormData();
         formData.append("file", file);
-        formData.append("table_name", file.name.split('.')[0]);  // Set table name from file name
         formData.append("x_var", x_var);  // Add x_var to formData
         formData.append("y_var", y_var);  // Add y_var to formData
 
@@ -33,8 +32,6 @@ function uploadFile() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert(data.success);
-
                 // Set the image view to show the generated plot
                 const imgView = document.getElementById("img-view");
                 imgView.innerHTML = `<img src="${data.img_url}" alt="Generated Plot">`;
