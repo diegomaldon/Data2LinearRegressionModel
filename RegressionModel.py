@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import sqlite3
+import seaborn as sns
 
 # extract data from SQLite database to Python
 # extract data from SQLite database to Python
@@ -35,31 +36,25 @@ def database_to_python(x_var, y_var, table_name):
 
 
 # build linear regression model
-def buildRegressionModel(x_list, y_list, x_var, y_var, filename=None):
-    # If no filename is provided, generate one based on the variables
-    if not filename:
-        filename = f'{x_var}_vs_{y_var}_plot.png'
-
-    # Initialize numpy arrays for prediction
-    x = np.array(x_list).reshape(-1, 1)
+def buildRegressionModel(x_list, y_list, x_var, y_var, filename="plot.png"):
+    # Convert lists to numpy arrays for regression
+    x = np.array(x_list)
     y = np.array(y_list)
 
-    # Create and fit the linear regression model
-    model = LinearRegression().fit(x, y)
+    sns.set_style("whitegrid")
+    sns.set_palette("Purples")
+    plt.figure(figsize=(8, 6))
 
-    # Predict using the model
-    y_pred = model.predict(x)
+    # Use Seaborn's regplot to create a linear regression plot with a confidence interval
+    sns.regplot(x=x, y=y, scatter_kws={"color": "purple"}, line_kws={"color": "orange"})
 
-    # Plotting the data
-    plt.scatter(x, y, color='blue', label='Data points')
-    plt.plot(x, y_pred, color='red', label='Regression line')
+    # Add labels and title
     plt.title(f'{y_var} vs {x_var}')
     plt.xlabel(f'{x_var}')
     plt.ylabel(f'{y_var}')
-    plt.legend()
 
     # Define the path where the plot will be saved
-    save_path = os.path.join('static', filename)
+    save_path = os.path.join('static', filename)  # Saving in the 'static/' directory
 
     # Save the plot to the defined path
     plt.savefig(save_path)
@@ -68,5 +63,5 @@ def buildRegressionModel(x_list, y_list, x_var, y_var, filename=None):
     plt.close()
 
     print(f"Plot saved successfully at {save_path}!")
-    return filename  # Returning the filename, not the full path
+    return save_path
 
