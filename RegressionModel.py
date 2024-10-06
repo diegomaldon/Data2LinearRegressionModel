@@ -2,7 +2,6 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import sqlite3
-from CSVtoSQL import table_name
 
 # extract data from SQLite database to Python
 # extract data from SQLite database to Python
@@ -19,18 +18,23 @@ def database_to_python(x_var, y_var, table_name):
     # place data
     data = cur.fetchall()
 
+    # initialize lists to input data from sql database
+    x_list = []
+    y_list = []
+
     # place data into respective python list
     for row in data:
         x_list.append(row[0])
         y_list.append(row[1])
 
+    return x_list, y_list
     # close the SQL database connection
     con.close()
 
 
 
 # build linear regression model
-def buildRegressionModel(x_var, y_var):
+def buildRegressionModel(x_list, y_list, x_var, y_var):
     # initialize numpy arrays for prediction
     x = np.array(x_list).reshape(-1, 1)
     y = np.array(y_list)
@@ -55,13 +59,4 @@ def buildRegressionModel(x_var, y_var):
     plt.legend()
     plt.show()
 
-# initialize lists to input data from sql database
-x_list = []
-y_list = []
-
-x_var = input("Enter your X variable (Spelt exactly as on CSV): ")
-y_var = input("Enter your Y variable (Spelt exactly as on CSV): ")
-
-database_to_python(x_var, y_var, table_name)
-buildRegressionModel(x_var, y_var)
-print("plotted successfully")
+    print("plotted successfully")

@@ -1,8 +1,11 @@
+import os
 from flask import Flask, request, jsonify, render_template
 import csv
 import io
 import sqlite3
 import pandas as pd
+
+from RegressionModel import database_to_python, buildRegressionModel
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
@@ -28,11 +31,25 @@ def upload():
 
         # Process the file and insert it into the database
         connection = sqlite3.connect("data.db")
-        table_name = request.form['table_name']
+
+        # create table name removing .csv from filename
+        table_name = file.filename.rsplit('.', 1)[0]
+
+        # Get x_var and y_var from form data
+        x_var = request.form.get("x_var")
+        y_var = request.form.get("y_var")
+        print(f"x_var: {x_var}, y_var: {y_var}")
+
+        if not x_var or not y_var:
+            return jsonify({"error": "X and Y variables are required."}), 400
+
         type_map = infer_sql_types(dataframe)
         create_sql_table(connection, table_name, type_map)
         insert_data_table(connection, table_name, dataframe)
         connection.close()
+
+        x_list, y_list = database_to_python(x_var, y_var, table_name)
+        buildRegressionModel(x_list, y_list, x_var, y_var)
 
         return jsonify({"success": "File uploaded and data inserted into the database!"}), 200
     else:
