@@ -18,18 +18,20 @@ model based off of two provided variables.
      - Matplotlib
      - NumPy
      - scikit-learn
-3. Ensure files are in structure:
+3. Ensure files are in structure (see next section)
+
+## Directory Structure
    CSV2LinearRegression/
-    -├── static/
-    -│   ├── styles.css
-    -│   ├── script.js
-    -│   └── icon.png
-    -├── templates/
-    -│   └── index.html
-    -├── data.db (gets created automatically by the program)
-    -├── CSVtoSQL.py
-    -├── RegressionModel.py
-    -└── README.md 
+   - |-- static/
+   - |---|-- styles.css
+   - |---|-- script.js
+   - |---|-- icon.png
+   - |--templates/
+   - |---|-- index.html
+   - |-- data.db (gets created automatically by the program)
+   - |-- CSVtoSQL.py
+   - |-- RegressionModel.py
+   - |-- README.md 
 
 ## Running the program
 1. Run CSVtoSQL.py
