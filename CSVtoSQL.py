@@ -3,8 +3,8 @@ import csv
 import io
 import sqlite3
 import pandas as pd
-
 from RegressionModel import database_to_python, buildRegressionModel
+
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
@@ -13,7 +13,7 @@ app = Flask(__name__, static_folder="static", template_folder="templates")
 def index():
     return render_template('index.html')  # This renders the HTML form when accessed
 
-# Route to handle file upload via POST
+# Route to handle file upload via POST (referenced to chatGPT)
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'file' not in request.files:
@@ -57,7 +57,7 @@ def upload():
     else:
         return jsonify({"error": "Invalid file type"}), 400
 
-# detect the delimiter that separates values in CSV file (referenced to chatGPT)
+# detect the delimiter that separates values in CSV file
 def detect_delimiter(csv_file):
     with open(csv_file, 'r') as file:
         # Use the csv.Sniffer to detect the delimiter

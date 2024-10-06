@@ -58,6 +58,7 @@ def buildRegressionModel(x_list, y_list, x_var, y_var, filename="plot.png"):
 
     # Save the plot to the defined path
     plt.savefig(save_path)
+    plt.show()
 
     # Close the figure to prevent display in non-GUI environments
     plt.close()
